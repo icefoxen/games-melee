@@ -1,0 +1,15 @@
+[sprite]
+numframes=8
+imgw=24
+imgh=3
+animdelay=2
+image="sparkle.png"
+[gameobj]
+mass=0.
+hits=40
+[area]
+tangible=false
+w=0.
+h=0.
+x=0.
+y=0.

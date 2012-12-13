@@ -1,0 +1,64 @@
+HACKER'S GUIDE, version 0.0
+Voidrunner, both the server and the client, are written in Objective Caml.
+For info on this language, see http://caml.inria.fr/.  If you want to do
+serious hacking around on it's internals, you need to know this language.  For
+non-serious hacking, you can probably get an idea of what's going on.
+
+Note that currently, Voidrunner is in development.  Thus, both code and
+comments are likely to be somewhat wonky.  If you want comments to be
+improved, talk to me, and I'll probably help.
+
+Voidrunner depends on the following libraries.  A good Linux system probably
+has most of these.  
+ocamlsdl
+ pthreads
+ SDL (1.2.7)
+  SDL_ttf
+   Freetype
+  SDL_mixer
+   Ogg Vorbis
+   libsmpeg
+  SDL_image
+   libpng
+   libjpeg
+
+Compiling on linux tends to be pretty straightforward, as long as the
+necessary libraries are installed correctly.  Just use the "build" script.
+You may have to modify the "compile" and "link" scripts a bit, but it's pretty
+straightforward.  I hate makefiles, and have yet to find a sane make-ish
+system.
+Compiling on Windows tends to be a lot more painful.  So far, only compiling
+in MinGW is supported; it'll probably work in Cygwin and might even work with
+MSVC++, but I haven't tried those.  One should generally start with the
+Windows OCaml compiler, either building a new one or taking the version from
+the OCaml website (which should have pthreads come with it, so).  Then you
+need to make sure you have all the required libraries, then you can build SDL
+and it's modules, then you build ocamlsdl.  
+Finally you cam build Voidrunner using the "build" script.  This script does
+nothing fancy, and should run on plain Bourne shell.  I have yet to find a
+build system that is not utterly painful to program for.
+
+
+Coding conventions:
+Indentation happens however the Tuareg OCaml mode for emacs thinks it should
+happen.  It does a good job.
+All identifiers should be in camelCase.  There is some old code, generally in
+the config, area, sprite and vector classes, that doesn't do this.  I'm too
+lazy to change it.
+Functions that turn type foo into type bar should be called foo2bar or
+bar2foo.  Getters and setters in objects should be foo#getBar and foo#setBar.
+The code style is NOT particularly "functional", mainly because it's not a
+good paradigm for this.  Functional programming rocks data structures,
+especially when you're only doing one thing at a time.  But it sucks I/O, and
+we do lots of I/O-based manipulations on lots of different bits of
+conceptually-unrelated mutable game state.
+Comments happen wherever I think they should, generally while I'm talking
+to myself about how a system should work.  Sorry if they're useless, but 1)
+I'm lazy and 2) I'm not practiced at consistant documentation and thus am not
+quite sure the best way to go about it, and 3) I wrote this alone and the
+design is simple enough I can generally hold a whole chunk of it in my head at
+once.
+Regardless, each file starts with the name, and a fairly accurate description
+of what it contains and/or should contain.  At the end is the name of the
+people who did stuff to it, and some random date on which stuff happened to
+it.

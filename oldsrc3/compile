@@ -1,0 +1,18 @@
+#/bin/sh
+OCC="ocamlc.opt"
+OCCOPT="ocamlopt.opt"
+
+INCLUDES="-I +sdl -I ./client -I ./server"
+
+FILES="util.ml config.ml resources.ml area.ml vector.ml drawing.ml sprite.ml net.ml typeindex.ml gameobj.ml particles.ml weapon.ml ship.ml netq.ml"
+
+CLIENTFILES="client/audio.ml client/text.ml client/input.ml client/gui.ml client/clientrealms.ml client/clientmain.ml"
+
+SERVERFILES="server/maploader.ml server/players.ml server/serverrealms.ml server/servermain.ml"
+
+#SERVERFILES="util.ml config.ml resources.ml area.ml vector.ml
+#sprite.ml  gameobj.ml particles.ml weapon.ml ship.ml realms.ml servermain.ml"
+
+# Baka.  Difference is in the linking.
+# But the dependancy-checking still has to be done...
+$OCCOPT -thread -c $INCLUDES $LIBS $FILES $CLIENTFILES $SERVERFILES

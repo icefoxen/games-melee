@@ -1,0 +1,63 @@
+To do: Player ship selection
+Energy, shields, and weapons
+Death notification
+
+
+Ship selection.  We need to let different players use different ships.  This
+means sending various types of ships, and actually selecting them from the
+typeindex (?) instead of just all using the same one.  This means sending a
+list of various ships, etc...
+Well, we send the client the list of ships in the handshake; we just need to
+send the real ships.  That ends up being a protocol and UI issue.  So.
+
+
+Death effects!
+Ship systems, componants, energy, shields, radar, etc.
+Efficient culling of objects-per-client --only sending nearby objects.
+Collision detection!
+
+Make player input and death messages send packets on keystate changes over
+TCP?
+
+SDL server terminal/map?
+Server high scores?
+Log files!
+
+Credits screen!
+Level editor!
+
+MLGame console code?
+Ghost players?
+Fiddle a bit with shot directions and velocities
+
+
+Hokay, I need a better handshake system; the players need to be able to choose
+ships.
+So, it will involve a few more steps.
+0) C->S, client handshake & initial connection containing name, version and
+IP.
+1) S->C, server handshake containing ships amoung other things
+2) C->S, client tells the server what ship it wants.
+3) S->C, server says "go!"
+
+
+
+
+
+GOALS!
+*Strong community
+*Team combat
+*Able to play a quick duel with a few friends
+*Play largely depends on skill
+*Tournements!
+*Theme/feeling?
+*Gameplay speed?  Fast action vs. slower tactics...  MW is good 'cause it has
+both.
+*"Campaign" mode?  High-score board?  Some kind of persistance at least...
+Don't get too fancy though.
+
+
+
+
+
+

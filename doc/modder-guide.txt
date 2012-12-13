@@ -1,0 +1,46 @@
+MODDER'S GUIDE, version 0.0
+This is the guide for people who want to mess around, making customized
+levels, weapons, ship options, and other such things.
+
+File formats:
+Voidrunner can use any audio or image format that SDL can use, which depends
+on what options and libraries it was compiled with.  The default distribution
+should support the following formats.  If files of these format don't work
+and/or cause errors, it's a bug, and should be reported.
+Image: PNG, JPG, BMP
+Sound: WAV, MIDI, MOD, MP3, OGG
+
+Config files:
+(or, how I learned to stop worrying and love the text editor)
+Just about all the real data in Voidrunner is kept in config files.  This
+includes client and server data, ship and weapon specifications, maps,
+animations, and realm information.  These are just plain text files that
+anyone, such as yourself, can toy with and customize.  This is deliberate.
+Someday, when I get real bored, I'll document the whole mess.
+You can generally figure out what kind of file it is by the extension.
+
+.cfg = general config files
+.map = map information
+.rlm = realm information
+.wep = weapon information
+.shp = ship information
+.obj = object information
+.ani = animation
+
+These conventions only exist to be handy for people.  The program doesn't care
+in the least.
+
+However, what the program DOES care about, is that the config directory for
+the client and server is EXACTLY the same.  Every file on the server must
+exist for the client, and vice versa.  Even if you create an empty file in one
+or the other, you can screw things up in Undefined Ways.  
+Technical explination: This is because the programs have to talk to each
+other, and tell each other what an object is.  They do this by sending a
+number back and forth that referrs to what config file should be used to
+represent the object.  If the server has config files a, b, and d, and the
+client has config files a, b, c, and d, then the server will say "config file
+3", which to it means d, but to the client means c.  There are clever ways
+around this, but they'd be a pain in the ass to do.
+
+The program should check to make sure each side has the same config files, and
+probably will someday, but not right now.

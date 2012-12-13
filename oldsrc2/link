@@ -1,0 +1,19 @@
+#!/bin/sh
+OCC="ocamlc.opt"
+OCCOPT="ocamlopt.opt"
+
+LIBDIRS="-I +sdl"
+
+LIBS="unix.cma nums.cma str.cma bigarray.cma sdl.cma sdlloader.cma sdlttf.cma sdlmixer.cma threads.cma"
+OPTLIBS="unix.cmxa nums.cmxa str.cmxa bigarray.cmxa sdl.cmxa sdlloader.cmxa sdlttf.cmxa sdlmixer.cmxa threads.cmxa"
+
+FILES="util.cmo drawing.cmo config.cmo resources.cmo area.cmo vector.cmo 
+	sprite.cmo gameobj.cmo particles.cmo weapon.cmo ship.cmo input.cmo audio.cmo 
+	text.cmo gui.cmo realms.cmo main.cmo"
+OPTFILES="util.cmx drawing.cmx config.cmx resources.cmx area.cmx vector.cmx 
+	sprite.cmx gameobj.cmx particles.cmx weapon.cmx ship.cmx input.cmx audio.cmx
+	text.cmx gui.cmx realms.cmx main.cmx"
+
+OUTFILE="melee"
+
+$OCCOPT -thread -o $OUTFILE $LIBDIRS $OPTLIBS $OPTFILES

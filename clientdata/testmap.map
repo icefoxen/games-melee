@@ -1,0 +1,16 @@
+[obj1]
+x=100.
+y=100.
+vectord=180.
+vectorm=1.
+objectfile="testobj2.obj"
+fixed=false
+
+
+[obj2]
+x=50.
+y=50.
+vectord=0.
+vectorm=10.
+objectfile="testobj.obj"
+fixed=false

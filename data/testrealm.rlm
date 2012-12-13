@@ -1,0 +1,18 @@
+[realm]
+framecap=true
+debug=false
+
+name="Test realm!"
+background="bigbackground4.png"
+width=2000.
+height=200.
+wallToughness=2000.
+speedCap=10000.
+datadir="data/"
+map="testmap.map"
+
+# This should really be in server settings, buuuut...
+# Well, so shouldld the framecap and debug values, really.
+# It would be handy if we could optionally override certain server settings
+# in the realm...
+throttleInterval=100

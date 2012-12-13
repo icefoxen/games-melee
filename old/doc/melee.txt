@@ -1,0 +1,573 @@
+A simple little Super Melee-ish space-duel game.
+
+Basically, set up a good system for people to fight, with various ships and
+weapons.  Maybe with customizable ships and an economy.
+
+Add computer players (a la MW instant-action)
+Add network play.
+Add co-operative play.
+Add mission play.
+And so on...
+
+
+Could end up being a big mmog... either just an arena, a la FPS stuff, or real
+wide-ranging spaces.  Economy, pirates, rankings...
+
+
+TODO:
+*Make proper engine/weapon points, maybe with thrust/fire animations.
+*Make weapons, shots, weapon behaviors, and death animations.
+*Collision detection: maybe a quadtree, with each object being collided
+against it's children (only direct children?).  Hard to modify though,
+especially considering balancing, and probably not too fast to build.  Maybe a
+grid, each object being picked into one or more overlapping squares and
+collided against other objects inside it.  That sounds better...
+Special handling for points, though?
+
+*Do weapons
+*Should sprites animate by frame or by time?  By time wouldn't be that hard,
+really...  Might be worthwhile to try it out.
+
+
+NAME
+Melee Groove?  Apoc?  Melee?  Zap?  Starset?  Groove?  Starrun?  Dark Galaxy?
+Ascender/Ascention?  Kestrel Strike?  Pandora?  Desperate Dance?  Zenith?
+Dark Zenith?  Deperate Zenith?  Cosmic Zenith?
+Maybe just Zenith...
+Starrunner, I think.  It sucks, though.
+Starchaser?  I kinda like that.
+Voidrunner!  Yes!
+
+
+GAMEPLAY
+This game is made pretty much soley for online play.  The question is the
+extent.  It's pretty simple to make it take up to 8 or 16 players.  It's a lot
+harder to make a semi-persistant MMO world, but also a lot more interesting.
+We shall start with 8-16 players, and add computer players if possible.
+There may be a rating system, so the winner gets more cash to buy better ships
+and so on.  Or at least a tournement system that functions thus; it'd make a
+good single-player mode.  If such an economy ends up existing, then it may be
+a good idea for destroyed ships to drop cash, componants and powerups.
+
+There can be several modes to the group-play mode.  Free for all, capture the
+flag, king of the hill, four bases (a "base" at each corner each player/team
+has to touch), siege (free for all, but with one side heavily fortified)...
+
+
+ENVIRONMENT
+The environment is... hmm.  Well, there's a few options I need to decide on.
+Either space is bounded, or it wraps, or it's infinate.
+Not infinate.  So, either bounded or wrap.  That can be a gameplay or map
+option, I suppose.
+There are various hazards, a la SC2, Inner Space and Subspace.  Floating
+wossnames, orbiting turrets, hazard blocks, non-hazard blocks, teleporters,
+etc.
+
+
+SHIPS
+Ships have various statistics.  You can customize ships, selecting various
+componants.  It's a matter of balance and trade-offs.
+XXX: Max speed?  Perhaps implemented as a drag factor...  It really should be
+there, or else things just get too silly.  Probably ends up being a
+(non-linear) function of acceleration or mass or something...
+
+Ship Statistics: Mass, engine power, space, structural hp, armor hp, shield
+hp, battery, weapons, devices, turn rate, energy regen
+Ship Componants: Chassis, shield, armor, engine, weapons, batteries,
+generators, specials
+
+Chassis: The basic frame of the ship.  Determines base mass, turn rate, space,
+and structural HP.
+Shield: Protection.  Absorbs a certain percentage of incoming damage, passes
+the rest on to the armor.  Regenerates, taking energy to do so.  Some weapons
+may penetrate shields, etc.
+Armor: Protection.  Just takes brute damage.  When overwhelmed, passes damage
+on to the structure.  When structure is destroyed, you go boom.
+Engine: The ship's primary drive.  Determines engine power, uses energy to
+function.  There are probably two broad types, torches (high energy, high
+power) and cruisers (low energy, v. low power).
+Weapons: Duh.  There's a variety, basically falling into the categories of
+beam, bolt, and missile.  Generally takes energy to fire and has a certain
+refire time.
+Batteries: Store power for weapons, shields, weapons, etc.
+Generators: Generates power.
+Specials: Special things like targetting computers, improved sensors,
+whatever.
+
+
+CHASSISES
+The chassis is the basic frame of the ship.  Different chassises (chassi?) are
+suited for different things.  The turn rate is a multiplier; a ship's turn
+rate is (acceleration * multiplier) degrees per second.  When the structural
+HP of a ship is depleted, it is destroyed.
+Each chassis can hold componants of each type taking up a maximum space of X,
+where X depends on the chassis.  This is the main way chassises are different
+from each other.
+Small ships are <50t, medium are <100t, large are <150t.
+
+Name: Fighter	Size: Small	HP: 50		Mass: 30t	Turn: 2.0
+Engine: 30	Shield: 15	Armor: 20	Weapon: 20	Battery: 25
+Generator: 20	Special: 15	Total: 145
+Basic all-around light ship, fairly solid.
+
+Name: Eggshell	Size: Small	HP: 10		Mass: 5t	Turn: 3.5
+Engine: 45	Shield: 10	Armor: 5	Weapon: 20	Battery: 20
+Generator: 15	Special: 5	Total: 120
+Tiny, fast, maneuverable, fragile.  That's about it.
+
+Name: Striker	Size: Medium	HP: 80		Mass: 65t	Turn: 1.0
+Engine: 90	Shield: 30	Armor: 25 	Weapon: 45	Battery: 40
+Generator: 45	Special: 30	Total: 285
+Hit-and-run, baby.  Fast, rather fragile.  Not a bad sniper, probably.  Less
+monomaniacally sparse as the Eggshell.
+
+Name: Sneak	Size: Medium	HP: 100		Mass: 85t	Turn: 1.5
+Engine: 65	Shield: 40	Armor: 15	Weapon: 30	Battery: 50
+Generator: 50	Special: 65	Total: 315
+A support ship.  Not too great in terms of weapons or sturdiness, but good
+batteries and generators, and lots of space for special equipment.
+
+Name: Brawler	Size: Large	HP: 160		Mass: 140t	Turn: 1.2
+Engine: 80	Shield: 65	Armor: 120	Weapon: 70	Battery: 60
+Generator: 45	Special: 15	Total: 455
+Big, mean, nasty, slow.  Heavy on armor and weapons, light on engines and
+specials, moderate on batteries, generators and shields.  Stay out of it's
+way.
+
+Name: Starset	Size: Large	HP: 125		Mass: 130t	Turn: 1.4
+Engine: 90	Shield: 60	Armor: 60 	Weapon: 60	Battery: 60
+Generator: 60	Special: 30	Total: 420
+Perfectly well-rounded.  How good a ship this actually becomes is yet to be
+seen.
+
+Name: 	Size: 	HP: 		Mass: 	Turn: 
+Engine: 	Shield: 	Armor: 	Weapon: 	Battery: 
+Generator: 	Special: 	Total: 
+
+
+ENGINES
+Engines propel your ship, and use energy to do so.  You can put on as many
+engines as you want, within the size limit.  The thrust is in tons per second,
+energy is units per second.  The thrust equation is the same as real life;
+acceleration = thrust / mass.
+Note that the T/E number is the thrust per energy ratio.  T/M is thrust per
+mass, and T/S is thrust per size.  That REALLY lets you see the difference
+between engines.
+XXX: The difference may be too extreme...
+
+XXX: There is currently NO speed cap!  There should be one, because otherwise
+things just have too much potential for breakage.  It's not even hard to get
+to insane speeds, just bounce back and forth between the walls of the realm.
+The cap may be high, but it should be there.  Perhaps dependant on the hull,
+engines, mass, or some interaction thereof.
+
+The basic trade-off is this: There's the high-thrust engines, which are really
+inefficient but give very high power for space and tonnage.  Then there's the
+low-thrust engines which use much less energy but are very big and heavy.
+
+Engine: Torch		Mass: 10t	Size: 5		T/E: 5.0
+Thrust: 100t	Energy: 20		T/M: 10.0	T/S: 20.0
+Basic brawny drive.
+
+Engine: Booster		Mass: 35t	Size: 20	T/E: 4.0
+Thrust: 500t	Energy: 125		T/M: 14.29	T/S: 25
+More efficient in terms of thrust per mass and size, but sucks more energy.
+
+Engine: Overthruster	Mass: 60t 	Size: 40	T/E: 3.125
+Thrust: 1250t	Energy: 400		T/M: 20.83	T/S: 31.25
+This will make you go.  A lot.  Only large ships can mount it though, and it
+sucks energy like a pig.
+
+Engine: Skeeter		Mass: 20t  	Size: 10	T/E: 25.0
+Thrust: 50t	Energy: 2		T/M: 2.5	T/S: 5.0
+Big, heavy, and doesn't produce much thrust.  But man, you can keep it going
+forever.
+
+Engine: Streak		Mass: 75t	Size: 35	T/E: 33.3
+Thrust: 200t	Energy: 6		T/M: 2.66	T/S: 5.71
+More efficient than the Skeeter, but also bigger and heavier.
+
+Engine: Sail		Mass: 150t	Size: 70	T/E: 41.6
+Thrust:	500t	Energy: 12		T/M: 3.33	T/S: 7.14
+Big, hulking, and unwieldy, but you will not find better efficiency anywhere.
+
+Engine: 		Mass:  	Size: 	T/E: 
+Thrust: 	Energy: 		T/M: 	T/S: 
+
+
+
+WEAPONS
+Things that shoot things.
+
+My instinct really says that I should have as many diverse and interesting
+weapons as possible, but my reasonableness says to try to keep it down to a
+varied, balanced minimum.  Remember that there IS NOT a progression of weak
+weapons to strong weapons like, say, SIS weapons in SC2.  Like the rest of the
+game, it's more a matter of balancing weaknesses with strengths.
+
+DD, DOT, AOE, snare, root, guided, unguided, shield/armor piercing,
+spreadfire, burst, fragment, mine, web, ...
+Do weapons have limited ammo?  If so, it had better regenerate.
+
+Energy is energy taken per shot, or per second if constant fire.  Refire is
+how many seconds happen between shots.
+D/T is damage per time, D/E is damage per energy
+
+Properties:
+Shield piercing means that shields are half as effective against them.
+Armor piercing means that it deals half damage to armor and half damage to
+structure, but shields stop them completely.
+Shield eroding means that the weapon deals it's full damage to shields, but
+does not damage anything else.
+Armor eroding means that the weapon passes through shields and destroys armor,
+but does not damage structure.
+
+Energy, organic, kinetic, explosive.  I was going to originally do a FE-ish
+weapons-square here, kinetic -> energy -> organic -> explosive -> kinetic, but
+that got kinda silly.  Instead, I made each of the four types have different
+weaknesses and strengths, and made a light, medium and heavy weapon for each.
+
+Energy: Short range, high power, high damage, shield eroding
+Organic: Short range, low pwer, moderate damage, armor eroding
+Kinetic: Long range, low power, low damage, shield piercing
+Explosive: Long range, high power, high damage, armor piercing
+
+Note: BALANCE FOR SIZE AND MASS!!!  Smaller weapons must not put out the same
+D/T as larger ones!!
+
+
+
+Weapon: Scattergun	Mass: 10t	Size: 5		Damage: 2 * 20
+Energy: 10	Refire: 1.0	Range: 650	D/T: 40		D/E: 4.0
+Mid-range, slow-firing cannon that sprays 20 shots more or less randomly in a
+30 degree cone.
+
+Weapon: Pearl		Mass: 30t	Size: 15	Damage: 50
+Energy: 25	Refire: 1.0	Range: 1900	D/T: 50		D/E: 2.0
+Very long-range, slow-firing cannon
+
+Weapon: Archer		Mass: 55t	Size: 25	Damage: 15
+Energy: 12	Refire: 0.40	Range: 1000 	D/T: 37.5	D/E: 1.25
+Long range, shield-piercing cannon 
+
+Weapon: Pulser		Mass: 15t	Size: 5		Damage: 10
+Energy: 4	Refire: 0.25	Range: 400	D/T: 40		D/E: 2.5
+Fairly short range, stutter-fire beam.
+
+Weapon: Blaster		Mass: 50t	Size: 20	Damage: 20
+Energy: 18	Refire: 0.3	Range: 250	D/T: 66.6	D/E: 1.1
+Short range mauler-cannon
+
+Weapon: Lance		Mass: 80t	Size: 40	Damage: 60
+Energy: 30	Refire: 1.0	Range: 350	D/T: 60.0	D/E: 1.6
+Short-range shield-eroding beam.  Zap, your shields HURT.
+
+Weapon: Dakkagun	Mass: 5t	Size: 5		Damage: 4 * 3
+Energy: 3	Refire: 0.25	Range: 550	D/T: 48		D/E: 4.0
+Medium-range, low-energy weapon; fires a spread of 3 bullets, front and 45
+degrees left and right.
+
+Weapon: Fist		Mass: 20t	Size: 10	Damage: 120
+Energy: 30	Refire: 3.0	Range: 100	D/T: 40		D/E: 4.0
+Slow, short range SMACK.
+
+Weapon: Acidgun		Mass: 35t	Size: 15	Damage: 5
+Energy: 2	Refire: 0.2	Range: 375	D/T: 25		D/E: 2.5
+Fast, short-range, armor-eroding gun.
+
+Weapon: Fragmenter	Mass: 20t	Size: 10	Damage: 5 * 8
+Energy: 30	Refire: 1.0	Range: 1150	D/T: 40		D/E: 1.3
+Long-range projectile that splinters into 8 fragments when it strikes
+something.  Fragments have a range of 80 and do 5 damage each.
+
+Weapon: Torpedo		Mass: 50t	Size: 20	Damage: 50
+Energy: 30	Refire: 1.0	Range: 1500	D/T: 50		D/E: 1.6
+Fires a bomb that explodes when it strikes something, doing 50 damage to a
+radius of 50 spaces.
+
+Weapon: Concussion	Mass: 100t	Size: 50	Damage: 80
+Energy: 50	Refire: 1.0	Range: 300	D/T: 80		D/E: 1.6
+Fires a powerful, short-range, armor-piercing blast that pushes the enemy
+around a bit.  XXX: Is it a missile instead?
+
+Weapon: 		Mass: 	Size: 	Damage: 
+Energy: 	Refire: 	Range: 	D/T: 		D/E: 
+
+
+
+
+SHIELDS
+Shields are your first line of defence against incoming fire.  They absorb a
+percentage of the damage a weapon does, and the rest goes on to armor.
+The amount of damage the shield soaks is rounded up.  For instance, if 3
+damage is done to a shield with an absorb of 50%, the shield takes 2 damage
+and the armor takes 1.
+That also means that weapons should never do 1 damage, since they'd just all
+get sucked by the shields...  And should at least 1 damage always be passed on
+to the armor?
+You can only have one type of shields, I'm afraid.
+Regen is how much energy it takes to recharge one shield point.
+
+Absorber and regenerative shields...
+
+Shield: Basic		Mass: 10t	Size: 5		Hits: 300
+Absorb: 50%	Regen: 3
+Your basic barrier shield.
+
+Shield: Heavy		Mass: 15t	Size: 5		Hits: 425
+Absorb: 70%	Regen: 5
+Heavier, beefier, stronger, slower recharge.
+
+Shield: Light		Mass: 5t	Size: 5		Hits: 175
+Absorb: 30%	Regen: 1
+Lighter, weaker, more fragile, faster recharge.
+
+Shield: Barrier		Mass: 20t	Size: 5		Hits: 200
+Absorb: 95%	Regen: 20
+Absorbs almost all damage.  You pay for it though.
+
+Shield: Mighty		Mass: 18t	Size: 5		Hits: 325
+Absorb: 60%	Regen: 5
+Is immune to shield-piercing and shield-eroding weapons.
+
+Shield: Reflecter	Mass: 20t	Size: 5		Hits: 250
+Absorb: 40%	Regen: 4
+Has a 12% chance of reflecting any given shot, taking no damage.
+
+Shield: Regenerative	Mass: 20t	Size: 5		Hits: 250
+Absorb: 40%	Regen: 0.5
+Regenerates pretty damn fast
+
+Shield: 		Mass: t	Size: 		Hits: 
+Absorb: 	Regen: 
+
+
+
+ARMORS
+Armor is your second line of defence; it takes whatever damage the shields
+pass through.  It tends to be quite tough and quite heavy.  You cannot have
+more than one type of armor at a time.  There is a variety of armor, some of
+which produces special effects.
+When armor is gone, the ship's structure takes damage.  When the structure is
+gone, the ship is destroyed. 
+
+Armor: Basic		Mass: 5t	Size: 5		Hits: 150
+Basic armor.  Stops stuff.
+
+Armor: Light		Mass: 2t	Size: 5		Hits: 90
+Light armor.  Pretty tough still.
+
+Armor: Heavy		Mass: 8t	Size: 5		Hits: 300
+Heavy armor.  REALLY tough.
+
+Armor: Reflective	Mass: 6t	Size: 5		Hits: 130
+Reflective armor.  Takes half damage from energy weapons (?).
+
+Armor: Regenerative	Mass: 8t	Size: 5		Hits: 110
+Relatively weak, but regenerates 1 hp every 5 seconds (?).
+
+Armor: Emissive		Mass: 10t	Size: 5		Hits: 120
+Basically, has damage reduction 5.  The first 5 damage of each hit is
+harmlessly dissipated, but the armor always takes at least 1 damage.
+Armor-piercing and armor-eroding weapons ignore the damage-soak.
+
+Armor: Interlocking	Mass: 6t	Size: 5		Hits: 145
+Is immune to armor-penetrating and armor-eroding attacks.
+
+Armor: 		Mass: 	Size: 		Hits: 
+
+
+
+BATTERIES
+Batteries are pretty damn simple.  They store energy.
+
+Battery: Basic		Mass: 3t	Size: 5		Capacity: 200
+Basic battery
+
+Battery: Light		Mass: 1t	Size: 5		Capacity: 125
+
+Battery: Heavy		Mass: 5t	Size: 5		Capacity: 300
+
+
+
+GENERATORS
+Generators are, likewise, quite simple.  You can mix-n-match all you want.
+
+Generator: Normal	Mass: 5t	Size: 5		Genrate: 20/sec
+
+Generator: Light	Mass: 2t	Size: 5		Genrate: 12/sec
+
+Generator: Heavy	Mass: 10t	Size: 5		Genrate: 27/sec
+
+Generator: Burst	Mass: 8t	Size: 5		Genrate: 100/4sec
+
+Generator:		Mass:		Size:		Genrate:
+
+SPECIALS
+Anything else.  They generally take a certain amount of energy to use.
+
+Cloaking device
+Makes you invisible on-screen
+
+ECM
+Makes you invisible to radar
+
+Jammer
+Makes radar fuzz out in a particular area
+
+Penetrating scanner
+Gives more info about target, makes ECM and Jammer less effective
+
+C3 system?
+Lets you use teammates' radar...
+
+Targetting computer
+Displays a leading-target reticle
+
+Auto-tracking system
+Weapons aim automatically toward the targetting comp's leading-target reticle
+
+Skimdrive
+A short-duration booster, pretty much phases you out while in use; can't hit
+things, can't be hit, can't fire.
+
+Chargebase
+Lets you transfer energy to other ships
+
+Repair drone
+Repairs structure and some armor
+
+Point-defence flak
+Short-range gun to shoot incoming fire
+
+Point-defence laser
+Medium-range gun to shoot incoming fire
+
+Tractor beam
+Pulls things
+
+Pressor beam
+Pushes things
+
+Blink drive
+You dissapear and re-appear some distance away; teleporter.
+
+Sensor upgrade
+You see further
+
+Reverse thrusters
+You can thrust in reverse; 1/2 power and energy, good for maneuvering.
+
+Turning jets
+Increases the turn rate multiplier by, say, 0.5
+
+
+
+
+HAZARDS
+Various things that exist in space and get in your way, making life more
+dangerous, or at least more interesting.
+
+Blocks: A block that's either immobile or perhaps moving on a fixed path;
+collision hazard.  Can be indestructable.
+
+Rocks: A block that's moving about randomly as per physics.  Can be
+indestructable.
+
+Mines: A drifting bomb that explodes upon proximity.
+
+Seeker mines: A drifting missile that locks onto something within proximity.
+
+Turrets: A drifting, autonomous platform bearing one of a variety of weapons.
+
+Wormholes: Random or fixed gates to another wormhole location; sucks things
+in, and may be damaging.
+
+Field generators: A network of interlocking lasers, hazardous to pass through.
+
+Gravwells: Areas that either suck you to the center or push you away.
+
+Webs: Driftnets that slow you down.
+
+Clouds: Areas of dust and gas that slow you down and erode your defences,
+diffuse and detonate weapons, confuse sensors, and are generally annoying.
+
+Generators: Things that wander around and create other hazards.
+
+Hulks: Remains of other ships, mundane and arcane.  May have still-active
+weapons or explosives on board.
+
+Bumpers: Devices that bounce you away very suddenly, though doing no damage.
+
+
+
+POWERUPS:
+The opposite of hazards.  These things exist to make life easier for you.
+They are, of course, much rarer.  They all last 30 seconds, except the
+recharges, which are permenant.
+
+Energy boost: Doubles your energy
+Energy recharge: Refills your energy
+Charge boost: Doubles your energy recharge
+Engine boost: Doubles your thrust
+Shield recharge: Doubles your shield recharge rate
+Shield boost: Doubles your shield hits
+Weapon boost: Doubles your weapon damage
+Armor boost: Doubles your armor hits
+Musou rage: You are invulnerable, all your weapons do 2x damage and you have
+2x energy and recharge.  Lasts 15 seconds.
+
+
+
+
+NETWORK JUNK:
+Here we document and describe the network protocol.
+Basically, how it works is this.  The server manages the realm, the game
+world, and all the interactions thereof.  The clients connect to it, and every
+1/4 second or so they get a list of all the objects they have to worry about,
+specifying type, location, direction, vector, etc.  In between these updates,
+they do their best to guess what's happening, just running basic physics.  If
+the server says an object isn't where the client thinks it is, the client
+either snaps or slides the object to it's correct location.
+Data on other players and other active objects (move in unpredictable ways
+under their own power) will probably be sent more often, maybe every 1/10th
+second, so there's not as much latency between one player thrusting and
+everyone else seeing him thrust.
+
+Types of packets:
+Handshake/initial data transfer (initing players, level, etc)
+-Players say hi to the server, authenticate themselves if necessary, send
+usernames, send ship selections to the server, server distributes the level and
+gameobj data to each client so everything's in sync(?), tells each client
+where it's gonna send event info.  Should be done as one long TCP transfer,
+probably
+-Information needed:
+
+Player Input (keystrokes, probably best done on a key-up key-down basis)
+-Two choices.  Either a TCP connection, with a packet sent each time the
+player state changes, ie a key is pressed or released.  This may be more
+complicated.
+Or, a UDP connection, sending the key state (ie bitmap or something) every 1/X
+seconds, maybe 1/5 or 1/10.
+-Information needed:
+
+Player event (players and objects moving)
+-This is the big load.  The server sends a whole swarm of UDP packets to each
+client every 1/4 second or so, one for each gameobj near the client (ie within
+radar range, near enough for it to see).  The ones further away are updated
+less often, probably.  The clients will probably have to do some pre-emptive
+calculation for the motions of objects, and adjust accordingly when it
+recieves real data from the server (either by jitter/jumps, or trying to do it
+smoothly).  This is going to be annoying as hell.
+-Information needed:
+
+Player misc
+This is for other stuff, information each player needs to have and have in
+sync with the server.  Player life changes, energy level and recharge level,
+weapon selection, 
+-Information needed:
+
+Chat (may include server commands)
+-This should be over a TCP connection, perhaps the same one as used for player
+input.  It can include server commands and queries.  Pretty simple, really.
+-Information needed:

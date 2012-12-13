@@ -1,0 +1,17 @@
+[area]
+x=500.
+y=000.
+w=25.
+h=25.
+tangible=true
+
+[sprite]
+image="littleboom.png"
+imgw=48
+imgh=24
+numframes=2
+animdelay=1
+
+[gameobj]
+hits=100
+mass=5.

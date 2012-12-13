@@ -1,0 +1,15 @@
+#!/bin/sh
+OCC="ocamlc.opt"
+OCCOPT="ocamlopt.opt"
+
+INCLUDES="-I +sdl"
+
+FILES="util.ml drawing.ml config.ml resources.ml area.ml vector.ml
+sprite.ml  gameobj.ml particles.ml weapon.ml ship.ml input.ml audio.ml text.ml
+gui.ml realms.ml clientmain.ml"
+
+#SERVERFILES="util.ml config.ml resources.ml area.ml vector.ml
+#sprite.ml  gameobj.ml particles.ml weapon.ml ship.ml realms.ml servermain.ml"
+
+# Baka.  Difference is in the linking.
+$OCCOPT -c $INCLUDES $LIBS FILES

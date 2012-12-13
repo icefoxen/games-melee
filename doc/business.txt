@@ -1,0 +1,19 @@
+So it's open-source, free software.  Anyone can mess with it.  Anyone can
+start their own server and have their own arena and design their own mods.
+
+BSD license.
+
+Servers have no way of talking to each other.  People have no way of finding
+out what servers exist.
+
+So, create the Official Voidrunner League.  Anyone can go to the website and
+see a certain selection of registered servers and mods.  Anyone can sign up
+for free and see all the registered servers.  Anyone can get a paid
+subscription that adds various services, announcements, and the option to
+register their own server(s).
+
+Hold monthly and annual tournements, for different mods, for different
+leagues (light, medium, heavy, unlimited).  Charge $5 for entry, offer, say,
+max( 10%, $100 ) as a prize.  Double these for the annual ones.  Fill 'em with
+awsome stuff; make it an Event, use them to debut new features, mods,
+codebases and changes.

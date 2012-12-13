@@ -1,0 +1,13 @@
+USER'S GUIDE, version 0.0
+This is the guide for the basic, everyday user.
+
+Compatability notes
+Whatever binary you download should have everything you need to play the game
+on your platform.  Supported platforms are:
+Linux/x86 (other architectures might work if you compile from scratch)
+Windows 2000/XP (The client might work on 95/98, but I'm not certain)
+Mac OSX (should someone be so kind as to maintain it for me...)
+
+Game
+Server/client stuff
+Key bindings

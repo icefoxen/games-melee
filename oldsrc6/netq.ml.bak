@@ -1,0 +1,72 @@
+(* netq.ml
+   A polymorphic object that sends and recieves and buffers data.
+   Oh, MAN, this is so much nicer than the structured version!  O_O
+   And functional programming is great for datastructures, but sucky for
+   IO processing.
+
+   ...hmm.  Multiplexing UDP over a single connection is bloody annoying,
+   it seems.
+
+   Simon Heath
+   5/7/2005
+*)
+
+open Unix;;
+open Net;;
+
+
+class ['a, 'b] netq sendport listenport proto =
+object (self)
+  val sendsock = socket PF_INET proto 0;
+  val listensock = socket PF_INET proto 0;
+  val mutable ic = Pervasives.stdin;
+  val mutable oc = Pervasives.stdout;
+  val mutex = Mutex.create ();
+  val queue = Queue.create ();
+(*
+  val sendmutex = Mutex.create ();
+  val sendqueue = Queue.create ();
+*)
+  val mutable listenerThread = Thread.create ignore ();
+(*  val mutable senderThread = Thread.create ignore (); *)
+
+  initializer
+    bind sock (ADDR_INET( (getMyIP ()), port ));
+    ic <- in_channel_of_descr sock;
+    oc <- out_channel_of_descr sock;
+    self#spawnListenerThread;
+
+  method private spawnListenerThread =
+    let tf () =
+      while true do
+	let data = (input_value ic : 'a) in
+	  Printf.printf "Grabbed data from %d\n" port;
+	  Mutex.lock mutex;
+	  Queue.add data queue;
+	  Mutex.unlock mutex;
+      done
+    in
+      listenerThread <- Thread.create tf ();
+
+
+  method getObjects =
+    let lst = ref [] in  
+      Mutex.lock mutex;
+      Queue.iter (fun x -> lst := x :: !lst) queue;
+      Queue.clear queue;
+      Mutex.unlock mutex;
+      !lst;
+
+  (* XXX: This may end up doing a lot of I/O, so it may be better to
+     have another thread and output queue for this.  Possibly with a
+     select involved.  *)
+  method sendObjects (objs : 'b list) sockaddr =
+    match sockaddr with
+	ADDR_INET( _, port ) -> Printf.printf "Sending to %d\n" port;
+	  connect sock sockaddr;
+	  List.iter (output_value oc) objs;
+	  flush oc;
+      | _ -> ()
+	  
+end;;
+

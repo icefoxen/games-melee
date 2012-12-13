@@ -1,0 +1,33 @@
+#!/bin/sh
+OCC="ocamlc.opt"
+OCCOPT="ocamlopt.opt"
+
+LIBDIRS="-I +sdl"
+
+LIBS="unix.cma nums.cma str.cma bigarray.cma sdl.cma sdlloader.cma sdlttf.cma sdlmixer.cma threads.cma"
+OPTLIBS="unix.cmxa nums.cmxa str.cmxa bigarray.cmxa sdl.cmxa sdlloader.cmxa sdlttf.cmxa sdlmixer.cmxa threads.cmxa"
+
+FILES="util.cmo config.cmo resources.cmo area.cmo vector.cmo drawing.cmo
+sprite.cmo net.ml typeindex.cmo gameobj.cmo particles.cmo weapon.cmo ship.cmo netq.cmo"
+
+OPTFILES="util.cmx config.cmx resources.cmx area.cmx vector.cmx drawing.cmx
+sprite.cmx net.ml typeindex.cmx gameobj.cmx particles.cmx weapon.cmx ship.cmx netq.cmx"
+
+
+CLIENTFILES="client/audio.cmo client/text.cmo client/input.cmo client/gui.cmo
+client/clientrealms.cmo client/clientmain.cmo"
+
+CLIENTOPTFILES="client/audio.cmx client/text.cmx client/input.cmx
+client/gui.cmx client/clientrealms.cmx client/clientmain.cmx"
+
+
+SERVERFILES="server/maploader.cmo server/players.cmo server/serverrealms.cmo server/servermain.cmo"
+
+SERVEROPTFILES="server/maploader.cmx server/players.cmx server/serverrealms.cmx server/servermain.cmx"
+
+
+SERVEROUTFILE="vrserver"
+CLIENTOUTFILE="vrclient"
+
+$OCCOPT -thread -o $SERVEROUTFILE $LIBDIRS $OPTLIBS $OPTFILES $SERVEROPTFILES
+$OCCOPT -thread -o $CLIENTOUTFILE $LIBDIRS $OPTLIBS $OPTFILES $CLIENTOPTFILES

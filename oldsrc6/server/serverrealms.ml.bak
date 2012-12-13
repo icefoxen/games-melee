@@ -1,0 +1,217 @@
+(* serverrealms.ml
+   A realm is what we call a level or arena; a gameplay area of a certain
+   fixed size.  We have one object that keeps track of all the things like
+   collision detection and physics handling.
+   This is the server-side, so we do no drawing, but instead send
+   all relevant info to the clients.  
+   It also takes care of meta-game stuff like input, background, music,
+   effects, timing...
+
+   Okay, we're taking this from the top, 'cause the player handling is
+   fucked up when jammed on top of everything else.
+
+   Simon Heath
+  2/7/2005
+*)
+
+open Resources;;
+open Util;;
+open Gameobj;;
+open Particles;;
+
+
+
+
+class realm cfgfile =
+  let cfg = getConfig cfgfile in
+object (self)
+(*
+  val mutable objects = []
+
+  (* An array of all object files so we can tell the client which is
+     which...  
+  val mutable objecttypes = [||]
+*)
+  val mutable player = new Ship.ship "testship.shp"
+  val mutable dimX = cfg#getFloat "realm" "width"
+  val mutable dimY = cfg#getFloat "realm" "height"
+  val mutable map = cfg#getStr "realm" "map"
+
+  val mutable players = [||]
+  val mutable playerships = [||]
+
+  val mutable wasthen = 0
+  val mutable isnow = 0
+  val mutable framecount = 1
+  val mutable continue = true
+  val mutable debug = cfg#getBool "realm" "debug"
+  val mutable framecap = cfg#getBool "realm" "framecap"
+  val mutable background = getImg (cfg#getStr "realm" "background")
+  val mutable wallToughness = cfg#getFloat "realm" "wallToughness"
+  val mutable speedCap = 
+    (* Make sure the speed cap is sane; we have a limit of 2^15
+       because of packet size *)
+    let s = cfg#getFloat "realm" "speedCap" in
+    let s = (min s (2. ** 15.)) in
+    let s = (max s 1.) in s
+
+  val mutable nextWepPressed = false
+  val mutable prevWepPressed = false
+
+
+  method getObjects = objects
+
+  method setObjects (o : gameobj list) = objects <- o
+
+  method addObject o = objects <- o :: objects
+
+  method addObjects olst = objects <- olst @ objects
+
+  method setPlayer p = player <- p
+  method getPlayer = player
+
+  method doCalc dt =
+    let t = float_of_int dt in
+      (* We have "soft" boundaries; for each distance d the player
+	 goes beyond them, they get d/2 acceleration in the opposite
+	 direction.  No ship should be able to continually go past them.
+	 Note that this DOES let you get to very high speeds by pin-balling
+	 back and forth.
+      *)
+    let doReverseAccel o =
+      if o#getX > dimX then
+	o#acceldm 270. ((o#getX -. dimX) *. t /. 2000.)
+      else if o#getX < -. dimX then
+	o#acceldm 90. ((-. dimX -. o#getX) *. t /. 2000.);
+      if o#getY > dimY then
+	o#acceldm 180. ((o#getY -. dimY) *. t /. 2000.)
+      else if o#getY < -. dimY then
+	o#acceldm 0. ((-. dimY -. o#getY) *. t /. 2000.);
+    in
+
+      List.iter (fun x -> doReverseAccel x; x#calculate dt) objects;
+      Particles.globalParticles#calc dt;
+
+  method doCollide t =
+    let rec loop (current : Gameobj.gameobj) lst =
+      if lst = [] then
+	()
+      else (
+	List.iter (fun x -> 
+		     if current#isColliding x t then (
+		       print_endline "Impact happened";
+		       current#impact x;
+		     )
+		  ) lst;
+	loop (List.hd lst) (List.tl lst);
+
+      )
+    in
+      loop (List.hd objects) (List.tl objects)
+	
+
+  method doChat =
+    (* XXX: Placeholder *)
+    let chatbuffer = ref "" in
+    let ichans = ref []
+    and ochans = ref [] in
+      ()
+
+  (* Grabs all the player input from the network and handles it *)
+  method doNetInput netq =
+    (* XXX: Placeholder *)
+(*    let a = {Net.pi_data = 0; Net.pi_time = 0;} in
+      a = (List.hd (Net.netqGetObjects netq)); *)
+      ()
+
+  (* Sends all the appropriate information off to each player 
+     XXX: Right now, it sends ALL the information to each player.
+  *)
+  method doNetOutput netq =
+    let sendClientInfo c = 
+      let caddr, (cic : in_channel), (coc : out_channel), cname = c in
+      let objpackets = List.map (fun x -> Net.gameobj2packet x 0 0 0) 
+			 objects in
+	print_endline "Sending...";
+	Net.netqSendObjects netq objpackets caddr;
+	Printf.printf "Sent info to player %s\n" cname;
+	flush stdout;
+    in
+      Array.iter sendClientInfo players
+
+  method doDeath =
+    let alivelst, deadlst = List.partition (fun x -> x#isAlive) objects in
+      objects <- alivelst;
+      (* Okay, each class can just override it's own death animation
+	 method, gods dammit. *)
+      (* List.iter (fun x -> self#addObjects x#makeDeathObjs) deadlst; *)
+
+
+  method initPlayers plst =
+    players <- Array.of_list plst;
+    playerships <- Array.create (Array.length players) (new Ship.ship "testship.shp");
+
+
+  (* XXX: TODO: Chat stuff handling *)
+  method doMainloop clients dataport =
+    (* Okay, so we need to create the player list, and the player ships.
+       Each player object is a tuple(?) of iaddr, ic, oc, name.
+       Then we go through 
+    *)
+    wasthen <- Sdltimer.get_ticks ();
+    isnow <- Sdltimer.get_ticks ();
+    (* Add map objects *)
+    self#addObjects 
+      (new Maploader.maploader (!Resources.datadir ^ map))#getObjectList;
+
+    (* Set up UDP connection for clients and spawn listening thread *)
+    let netq = (Net.initNetq dataport : Net.playerInput Net.netq) in
+
+      self#initPlayers clients;
+
+
+      self#addObject (player : Ship.ship :> Gameobj.gameobj);    
+      player#addWeapon "testweapon1.wep";
+      player#addWeapon "testweapon2.wep"; 
+      player#addWeapon "testweapon.wep";
+
+      while continue do
+	framecount <- framecount + 1;
+
+	let dt = (Sdltimer.get_ticks ()) - wasthen in
+	  self#doCalc dt;
+
+
+	  self#doNetInput netq;
+	  (* Not terribly efficient, since we iterate over the list several
+	     times, buuut... *)
+
+
+	  self#doCollide dt;
+	  self#doDeath;
+
+	  self#doNetOutput netq;
+
+	  (* Make a bit of dynamicism, just for now *)
+	  (*
+	    addStuffIncr := !addStuffIncr - dt;
+	    if !addStuffIncr < 0 then (
+	    addStuffIncr := 15000;
+	    let x = new Gameobj.gameobj "testobj.cfg" in
+	    x#moveTo (Random.float 300.) (Random.float 300.);
+	    self#addObject x;
+	    );
+	  *)
+
+	  (* 60 is desired fps *)
+	  if framecap then
+	    while ((Sdltimer.get_ticks ()) - wasthen) < (1000 / 60) do
+	      ()
+	    done;
+	  wasthen <- isnow;
+	  isnow <- Sdltimer.get_ticks ();
+	  flush stdout;
+      done;
+*)
+end;;
+

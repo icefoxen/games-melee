@@ -1,0 +1,25 @@
+[area]
+x=0.
+y=0.
+w=3.
+h=3.
+tangible=true
+
+[sprite]
+image="sparklered.png"
+imgw=24
+imgh=3
+numframes=8
+animdelay=1
+
+[gameobj]
+hits=1
+mass=0.1
+
+[shot]
+name="Test weapon 2"
+damage=12
+lifetime=2800
+speed=15.0
+refire=1500
+energy=10

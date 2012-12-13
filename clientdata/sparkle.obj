@@ -1,0 +1,22 @@
+# No area
+[area]
+x=0.
+y=0.
+w=0.
+h=0.
+tangible=false
+
+# The length of the engine trail depends on numframes, animdelay and hits.
+# Hits is how many frames it lasts period, and numframes and animdelay
+# determine how long it takes to go through a single iteration.
+[sprite]
+image="sparkle.png"
+imgw=24
+imgh=3
+numframes=8
+animdelay=2
+
+[gameobj]
+# For coolness, set it to 45!
+hits=40
+mass=0.

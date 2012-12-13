@@ -1,0 +1,16 @@
+[obj1]
+x=1000.
+y=100.
+vectord=180.
+vectorm=10.
+objectfile="testobj.obj"
+fixed=false
+
+
+[obj2]
+x=100.
+y=1000.
+vectord=180.
+vectorm=10.
+objectfile="sparkle.obj"
+fixed=false

@@ -1,0 +1,15 @@
+[sprite]
+numframes=32
+imgw=2304
+imgh=72
+animdelay=0
+image="sw-rotate.png"
+[gameobj]
+mass=5.
+hits=100
+[area]
+tangible=true
+w=25.
+h=25.
+x=500.
+y=0.

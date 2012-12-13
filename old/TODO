@@ -1,0 +1,82 @@
+Levels?  How are objects placed and so on?
+Death effects!
+Ship systems, componants, energy, shields, etc.
+
+Client/server seperation, object-id's.
+
+
+
+...great.  Looks like the server bit's gonna be bigger than I anticipated,
+since I'll have to have multiple threads for the network connection.
+Basically, the cycle will go like this:
+The mainloop will be constantly spinning at a fixed rate, getting event
+packets off a queue, sending position updates to players (cycling through
+them a few times per second?)
+The queue will be fed by a thread that just waits for incoming packets
+
+Timing and synchronization between client and server could get weird.  Expect
+lag of up to half-second bursts...
+TCP or UDP?
+
+Types of packets:
+Handshake/initial data transfer (initing players, level, etc)
+-Players say hi to the server, authenticate themselves if necessary, send
+usernames, send ship selections to the server, server distributes the level and
+gameobj data to each client so everything's in sync(?), tells each client
+where it's gonna send event info.  Should be done as one long TCP transfer,
+probably
+
+Player Input (keystrokes, probably best done on a key-up key-down basis)
+-Two choices.  Either a TCP connection, with a packet sent each time the
+player state changes, ie a key is pressed or released.  This may be more
+complicated.
+Or, a UDP connection, sending the key state (ie bitmap or something) every 1/X
+seconds, maybe 1/5 or 1/10.
+
+Player event (players and objects moving)
+-This is the big load.  The server sends a whole swarm of UDP packets to each
+client every 1/4 second or so, one for each gameobj near the client (ie within
+radar range, near enough for it to see).  The ones further away are updated
+less often, probably.  The clients will probably have to do some pre-emptive
+calculation for the motions of objects, and adjust accordingly when it
+recieves real data from the server (either by jitter/jumps, or trying to do it
+smoothly).  This is going to be annoying as hell.
+
+Player misc
+This is for other stuff, information each player needs to have and have in
+sync with the server.  Player life changes, energy level and recharge level,
+weapon selection, 
+
+Chat (may include server commands)
+-This should be over a TCP connection, perhaps the same one as used for player
+input.  It can include server commands and queries.  Pretty simple, really.
+
+
+
+
+It appears that OCaml threads are a headache.  If you want opt code, you have
+to use pthreads.  Getting pthreads to work on Windows is bound to be... fun.
+So, this leaves us a few alternatives:
+*Try to get pthreads working under Win, using MinGW (should work fine)
+*Try to get pthreads working under win, using Cygwin
+*Ignore pthreads and use create_process, which will make IPC interesting since
+we won't have Unix sockets on windows either
+*Try to make the web-server non-threaded, using select() perhaps
+*Say the server only works on Unix
+
+Either way, it should be noted that since I'll probably be using
+in_channel_of_descr and out_channel_of_descr, that limits me to WinNT and
+beyond.  We COULD live without using these functions, but life would be
+Unpleasant.
+
+Windows pthreads are apparently doable, so.
+
+
+
+Network coding
+For each object sent to the client:
+time, header, X, Y, vectorx, vectory, facing/anim, 
+
+2     2       4  4  2        2        2
+
+Total of 18 bytes...  Targetting data may take more.
